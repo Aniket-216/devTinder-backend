@@ -7,8 +7,13 @@ const authenticateUser = async (req, res, next) => {
     try {
         // Get token from cookies
         const { token } = req.cookies;
+
         if (!token) {
-            return res.status(401).send("Authentication required");
+            return res.status(401).json({
+                success: false,
+                message: "No authentication token found in cookies",
+                error: "Authentication required",
+            });
         }
 
         // verify the token
@@ -16,9 +21,13 @@ const authenticateUser = async (req, res, next) => {
 
         // extract the id from the decodedMessage
         const { _id } = decodedMessage;
+        if (!_id) {
+            throw new Error("Invalid token structure - no _id found");
+        }
 
         // Find user by id
         const user = await User.findById(_id);
+
         if (!user) {
             throw new Error("User not found");
         }
@@ -30,6 +39,7 @@ const authenticateUser = async (req, res, next) => {
             success: false,
             message: "Authentication failed",
             error: error.message,
+            details: error.stack,
         });
     }
 };
