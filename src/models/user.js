@@ -132,7 +132,7 @@ userSchema.virtual("fullName").get(function () {
 });
 
 // Add index for faster queries
-userSchema.index({ emailId: 1 });
+// userSchema.index({ emailId: 1 });
 
 userSchema.methods.getJWT = function () {
     const token = jwt.sign(
